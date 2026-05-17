@@ -44,8 +44,8 @@
     .debug {
       font-size: 12px;
       color: gray;
-      margin-top: 10px;
       white-space: pre-wrap;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -91,7 +91,12 @@
 
       try {
 
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl, {
+          method: "GET",
+          headers: {
+            "x-api-key": "sweden26!"
+          }
+        });
 
         log("STATUS: " + response.status);
 
@@ -112,7 +117,7 @@
       } catch (err) {
 
         log("ERROR: " + err.message);
-        alert("Failed to connect to AI server. Check console.");
+        alert("Failed to connect to AI server");
       }
     }
 
