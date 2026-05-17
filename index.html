@@ -83,20 +83,17 @@
         return;
       }
 
+      // ✅ NO HEADERS — API KEY IN URL
       const apiUrl =
         "https://devotion-chastise-unfasten.ngrok-free.dev/city?city="
-        + encodeURIComponent(city);
+        + encodeURIComponent(city)
+        + "&api_key=sweden26!";
 
       log("Requesting: " + apiUrl);
 
       try {
 
-        const response = await fetch(apiUrl, {
-          method: "GET",
-          headers: {
-            "x-api-key": "sweden26!"
-          }
-        });
+        const response = await fetch(apiUrl);
 
         log("STATUS: " + response.status);
 
