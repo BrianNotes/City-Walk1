@@ -1,86 +1,137 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>City Walk Planner</title>
+  <title>AI City Walk Planner</title>
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
     body {
       font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: auto;
       padding: 20px;
     }
 
-    button {
-      padding: 14px 20px;
-      font-size: 18px;
-      cursor: pointer;
+    h1 {
+      text-align: center;
+    }
+
+    input {
       width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      margin-bottom: 10px;
+      cursor: pointer;
     }
 
     ul {
       margin-top: 20px;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .note {
+      font-size: 12px;
+      color: gray;
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
+
 <body>
 
-  <h1>Gothenburg Sightseeing Walk</h1>
+  <h1>AI City Walk Planner</h1>
 
-  <button onclick="openRoute()">
-    Open Walking Route in Google Maps
-  </button>
+  <input id="cityInput" placeholder="Enter a city (e.g. London)">
+
+  <button onclick="generateWalk()">Generate Walk</button>
+  <button onclick="openRoute()">Open Walking Route</button>
 
   <ul id="places"></ul>
 
+  <div class="note">
+    Powered by Ollama + FastAPI + Google Maps
+  </div>
+
   <script>
-    const places = [
-      {
-        "name": "Universeum",
-        "lat": 57.7053,
-        "lng": 11.9654
-      },
-      {
-        "name": "Gothenburg Museum of Art (Göteborgs Konstmuseum)",
-        "lat": 57.7078,
-        "lng": 11.9885
-      },
-      {
-        "name": "Liseberg Amusement Park",
-        "lat": 57.7021,
-        "lng": 11.9784
-      },
-      {
-        "name": "Botanical Garden (Botaniska Trädgården)",
-        "lat": 57.6956,
-        "lng": 11.9733
-      },
-      {
-        "name": "Haga District (Haga Church)",
-        "lat": 57.7044,
-        "lng": 11.9693
+
+    let places = [];
+
+    async function generateWalk() {
+
+      const city = document.getElementById("cityInput").value;
+
+      if (!city) {
+        alert("Please enter a city");
+        return;
       }
-    ];
 
-    // Show list on page
-    const ul = document.getElementById("places");
+      const apiUrl =
+        "https://devotion-chastise-unfasten.ngrok-free.dev/city?city="
+        + encodeURIComponent(city);
 
-    places.forEach(place => {
-      const li = document.createElement("li");
-      li.textContent = place.name;
-      ul.appendChild(li);
-    });
+      try {
+
+        const response = await fetch(apiUrl, {
+          headers: {
+            "x-api-key": "sweden26!"
+          }
+        });
+
+        const data = await response.json();
+
+        console.log("AI response:", data);
+
+        if (data.error) {
+          alert("Error from server: " + data.error);
+          return;
+        }
+
+        places = data;
+
+        displayPlaces();
+
+      } catch (err) {
+        console.error(err);
+        alert("Failed to connect to AI server");
+      }
+    }
+
+    function displayPlaces() {
+
+      const ul = document.getElementById("places");
+
+      ul.innerHTML = "";
+
+      places.forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = p.name;
+        ul.appendChild(li);
+      });
+    }
 
     function openRoute() {
 
-      // Google Maps supports:
-      // origin
-      // destination
-      // waypoints
+      if (!places || places.length < 2) {
+        alert("Generate a walk first");
+        return;
+      }
 
-      const origin =
-        `${places[0].lat},${places[0].lng}`;
+      const origin = `${places[0].lat},${places[0].lng}`;
 
-      const destination =
-        `${places[places.length - 1].lat},${places[places.length - 1].lng}`;
+      const destination = `${places[places.length - 1].lat},${places[places.length - 1].lng}`;
 
       const waypoints = places
         .slice(1, places.length - 1)
@@ -96,6 +147,7 @@
 
       window.open(url, "_blank");
     }
+
   </script>
 
 </body>
