@@ -47,6 +47,13 @@
       margin-top: 10px;
       text-align: center;
     }
+
+    .debug {
+      font-size: 12px;
+      color: #666;
+      white-space: pre-wrap;
+      margin-top: 15px;
+    }
   </style>
 </head>
 
@@ -61,6 +68,8 @@
 
   <ul id="places"></ul>
 
+  <div class="debug" id="debug"></div>
+
   <div class="note">
     Powered by Ollama + FastAPI + Google Maps
   </div>
@@ -69,7 +78,14 @@
 
     let places = [];
 
+    function log(msg) {
+      console.log(msg);
+      document.getElementById("debug").innerText += msg + "\n";
+    }
+
     async function generateWalk() {
+
+      document.getElementById("debug").innerText = "";
 
       const city = document.getElementById("cityInput").value;
 
@@ -78,19 +94,22 @@
         return;
       }
 
+      // 🔴 YOUR NGROK ENDPOINT
       const apiUrl =
         "https://devotion-chastise-unfasten.ngrok-free.dev/city?city="
         + encodeURIComponent(city);
 
+      log("Requesting: " + apiUrl);
+
       try {
 
-        const response = await fetch(apiUrl, {
-          headers: {
-            "x-api-key": "sweden26!"
-          }
-        });
+        const response = await fetch(apiUrl);
+
+        log("STATUS: " + response.status);
 
         const data = await response.json();
+
+        log("RESPONSE RECEIVED");
 
         console.log("AI response:", data);
 
@@ -104,7 +123,9 @@
         displayPlaces();
 
       } catch (err) {
+
         console.error(err);
+        log("ERROR: " + err.message);
         alert("Failed to connect to AI server");
       }
     }
@@ -112,7 +133,6 @@
     function displayPlaces() {
 
       const ul = document.getElementById("places");
-
       ul.innerHTML = "";
 
       places.forEach(p => {
