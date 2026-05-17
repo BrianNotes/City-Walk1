@@ -41,11 +41,11 @@
       margin-bottom: 8px;
     }
 
-    .debug {
+    .note {
       font-size: 12px;
       color: gray;
-      white-space: pre-wrap;
-      margin-top: 15px;
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
@@ -61,20 +61,15 @@
 
   <ul id="places"></ul>
 
-  <div class="debug" id="debug"></div>
+  <div class="note">
+    Powered by Ollama + FastAPI + Google Maps
+  </div>
 
   <script>
 
     let places = [];
 
-    function log(msg) {
-      console.log(msg);
-      document.getElementById("debug").innerText += msg + "\n";
-    }
-
     async function generateWalk() {
-
-      document.getElementById("debug").innerText = "";
 
       const city = document.getElementById("cityInput").value;
 
@@ -84,39 +79,32 @@
       }
 
       const apiUrl =
-        "https://devotion-chastise-unfasten.ngrok-free.dev/city"
-        + "?city=" + encodeURIComponent(city)
-        + "&api_key=sweden26!";
-
-      log("Requesting: " + apiUrl);
+        "https://devotion-chastise-unfasten.ngrok-free.dev/city?city="
+        + encodeURIComponent(city);
 
       try {
 
         const response = await fetch(apiUrl, {
-          method: "GET",
-          mode: "cors",
-          cache: "no-cache"
+          headers: {
+            "x-api-key": "sweden26!"
+          }
         });
 
-        log("STATUS: " + response.status);
+        const data = await response.json();
 
-        const text = await response.text();
+        console.log("AI response:", data);
 
-        log("RAW RESPONSE:\n" + text);
-
-        if (!response.ok) {
-          throw new Error("HTTP error " + response.status);
+        if (data.error) {
+          alert("Error from server: " + data.error);
+          return;
         }
-
-        const data = JSON.parse(text);
 
         places = data;
 
         displayPlaces();
 
       } catch (err) {
-
-        log("ERROR: " + err.message);
+        console.error(err);
         alert("Failed to connect to AI server");
       }
     }
@@ -124,6 +112,7 @@
     function displayPlaces() {
 
       const ul = document.getElementById("places");
+
       ul.innerHTML = "";
 
       places.forEach(p => {
