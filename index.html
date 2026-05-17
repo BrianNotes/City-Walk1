@@ -83,11 +83,12 @@
         return;
       }
 
-      // ✅ NO HEADERS — API KEY IN URL
+      const apiKey = "sweden26!";
+
       const apiUrl =
-        "https://devotion-chastise-unfasten.ngrok-free.dev/city?city="
-        + encodeURIComponent(city)
-        + "&api_key=sweden26!";
+        "https://devotion-chastise-unfasten.ngrok-free.dev/city"
+        + "?city=" + encodeURIComponent(city)
+        + "&api_key=" + encodeURIComponent(apiKey);
 
       log("Requesting: " + apiUrl);
 
