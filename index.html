@@ -83,18 +83,20 @@
         return;
       }
 
-      const apiKey = "sweden26!";
-
       const apiUrl =
         "https://devotion-chastise-unfasten.ngrok-free.dev/city"
         + "?city=" + encodeURIComponent(city)
-        + "&api_key=" + encodeURIComponent(apiKey);
+        + "&api_key=sweden26!";
 
       log("Requesting: " + apiUrl);
 
       try {
 
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl, {
+          method: "GET",
+          mode: "cors",
+          cache: "no-cache"
+        });
 
         log("STATUS: " + response.status);
 
